@@ -18,7 +18,7 @@ public class URLFacade {
 
     public String getShortUrl(String longUrl) {
 
-        URLEntry urlEntry = service.getURLEntityByLongUrl(longUrl);
+        URLEntry urlEntry = service.getOrSaveURLEntity(longUrl);
 
         return urlEntry.getShortUrl();
     }

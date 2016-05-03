@@ -52,7 +52,7 @@ public class URLService {
         return dao.getURLEntityByShortUrl(shortUrl);
     }
 
-    public URLEntry saveURLEntity(String longUrl) {
+    public URLEntry getOrSaveURLEntity(String longUrl) {
 
         URLEntry entry = findURLEntityByLongUrl(longUrl);
 

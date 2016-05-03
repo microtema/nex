@@ -26,13 +26,13 @@ public class URLResource {
     @Path("/short/{url}")
     public Response getShortUrl(@PathParam("url") String url) {
 
-        return Response.ok().build();
+        return Response.ok(facade.getShortUrl(url)).build();
     }
 
     @GET
     @Path("/long/{url}")
     public Response getLongUrl(@PathParam("url") String url) {
 
-        return Response.ok().build();
+        return Response.ok(facade.getLongUrl(url)).build();
     }
 }

@@ -61,21 +61,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.0.201403182114</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <destFile>${sonar.jacoco.reportPath}</destFile>
-                </configuration>
-            </plugin>
-            <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>${maven.war.plugin.version}</version>
                 <configuration>
@@ -279,11 +264,11 @@
 
     </dependencies>
 
-    <description>This project is the server part of the Job Portal providing the generated a REST interface
+    <description>This project is the server part of the URL shortening Service providing the generated a REST interface
         for data access.
     </description>
     <scm>
-        <connection>scm:git:https://github.com/sevenfate/laas-wildfly</connection>
+        <connection>scm:git:https://github.com/sevenfate/nex</connection>
     </scm>
     <developers>
         <developer>

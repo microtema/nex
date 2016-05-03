@@ -2,6 +2,7 @@ package de.seven.fate.shorturl.model;
 
 import de.seven.fate.shorturl.dao.IdAble;
 
+import javax.annotation.Generated;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
@@ -11,7 +12,7 @@ import java.util.Objects;
  * Created by Mario on 03.05.2016.
  */
 @NamedQueries({
-        @NamedQuery(name = URLEntry.FIND_BY_LONG_URL, query = "SELECT u FROM URLEntry u WHERE u.longUrl = :longUrl"),
+        @NamedQuery(name = URLEntry.FIND_BY_LONG_URL, query = "SELECT u FROM URLEntry u WHERE u.longUrl LIKE :longUrl"),
         @NamedQuery(name = URLEntry.FIND_BY_SHORT_URL, query = "SELECT u FROM URLEntry u WHERE u.shortUrl = :shortUrl")
 })
 @Entity
@@ -19,7 +20,10 @@ public class URLEntry implements IdAble<Long> {
 
     public static final String FIND_BY_LONG_URL = "URLEntry.findByLongUrl";
     public static final String FIND_BY_SHORT_URL = "URLEntry.findByShortUrl";
+
+
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @NotNull
