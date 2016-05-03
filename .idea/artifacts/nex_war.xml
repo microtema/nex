@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="nex:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="nex-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="nex:war exploded" />
+    </root>
+  </artifact>
+</component>
