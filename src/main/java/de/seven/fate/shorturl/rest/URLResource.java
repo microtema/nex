@@ -4,12 +4,13 @@ import de.seven.fate.shorturl.facade.URLFacade;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 /**
  * Created by Mario on 03.05.2016.
@@ -23,10 +24,16 @@ public class URLResource {
     private URLFacade facade;
 
     @GET
-    @Path("/short/{url}")
-    public Response getShortUrl(@PathParam("url") String url) {
+    @Path("/{url}")
+    public Response redirect(@PathParam("url") String url) throws URISyntaxException {
 
-        return Response.ok(facade.getShortUrl(url)).build();
+        return Response.seeOther(new URI(facade.getLongUrl(url))).build();
+    }
+
+    @POST
+    public Response convertAndSaveShortUrl(String url) {
+
+        return Response.ok(facade.convertAndSaveShortUrl(url)).build();
     }
 
     @GET

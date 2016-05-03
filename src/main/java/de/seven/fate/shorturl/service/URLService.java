@@ -1,6 +1,6 @@
 package de.seven.fate.shorturl.service;
 
-import de.seven.fate.shorturl.converter.URLShort2LongConverter;
+import de.seven.fate.shorturl.converter.URLShortConverter;
 import de.seven.fate.shorturl.dao.URLEntryDAO;
 import de.seven.fate.shorturl.model.URLEntry;
 import org.apache.commons.lang3.Validate;
@@ -19,7 +19,7 @@ public class URLService {
     private URLEntryDAO dao;
 
     @Inject
-    private URLShort2LongConverter converter;
+    private URLShortConverter converter;
 
 
     public URLEntry getURLEntityByLongUrl(String longUrl) {

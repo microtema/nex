@@ -27,11 +27,12 @@ public class URLEntry implements IdAble<Long> {
     private Long id;
 
     @NotNull
-    @Column(length = 256)
+    @Column(length = 6, unique = true)
     private String shortUrl;
 
     @NotNull
     @Lob
+    @Column(unique = true)
     private String longUrl;
 
     private Date dateCreated;
