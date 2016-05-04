@@ -17,7 +17,7 @@ public class URLEntryDAO extends AbstractEntityDAO<URLEntry, Long> {
 
         List<URLEntry> resultList = query.getResultList();
 
-        return CollectionUtil.first(resultList);
+        return  resultList.stream().findFirst().orElse(null);
     }
 
     public URLEntry getURLEntityByShortUrl(String shortUrl) {
@@ -26,6 +26,6 @@ public class URLEntryDAO extends AbstractEntityDAO<URLEntry, Long> {
 
         List<URLEntry> resultList = query.getResultList();
 
-        return CollectionUtil.first(resultList);
+        return  resultList.stream().findFirst().orElse(null);
     }
 }

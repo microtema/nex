@@ -8,6 +8,9 @@ import org.apache.commons.lang3.Validate;
 import javax.ejb.NoSuchEntityException;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.util.Optional;
+
+import static org.apache.commons.lang3.Validate.notBlank;
 
 /**
  * Created by Mario on 03.05.2016.
@@ -23,31 +26,27 @@ public class URLService {
 
 
     public URLEntry getURLEntityByLongUrl(String longUrl) {
-        Validate.notNull(longUrl);
+        notBlank(longUrl);
 
         URLEntry entry = findURLEntityByLongUrl(longUrl);
 
-        if (entry != null) {
-            return entry;
-        }
-
-        throw new NoSuchEntityException("unable to get URLEntity by URL: " + longUrl);
+        return Optional.ofNullable(entry).orElseThrow(() -> new NoSuchEntityException("unable to get URLEntity by URL: " + longUrl));
     }
 
     public URLEntry findURLEntityByLongUrl(String longUrl) {
-        Validate.notNull(longUrl);
+        notBlank(longUrl);
 
         return dao.getURLEntityByLongUrl(longUrl);
     }
 
     public URLEntry findURLEntityByShortUrl(String shortUrl) {
-        Validate.notNull(shortUrl);
+        notBlank(shortUrl);
 
         return dao.getURLEntityByShortUrl(shortUrl);
     }
 
     public URLEntry getURLEntityByShortUrl(String shortUrl) {
-        Validate.notNull(shortUrl);
+        notBlank(shortUrl);
 
         return dao.getURLEntityByShortUrl(shortUrl);
     }

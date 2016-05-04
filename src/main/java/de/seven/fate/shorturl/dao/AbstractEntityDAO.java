@@ -37,11 +37,15 @@ public abstract class AbstractEntityDAO<E extends IdAble<I>, I extends Serializa
         notNull(entity);
 
         saveImpl(entity);
+
+        em.flush();
     }
 
     public void save(Collection<E> entities) {
 
         Optional.ofNullable(entities).orElse(Collections.emptyList()).forEach(this::save);
+
+        em.flush();
     }
 
 
@@ -199,16 +203,14 @@ public abstract class AbstractEntityDAO<E extends IdAble<I>, I extends Serializa
         return em.createQuery(criteria).getSingleResult();
     }
 
-    public Query createNamedQuery(String namedQuery, Object... params) {
+    public TypedQuery<E> createNamedQuery(String namedQuery, Object... params) {
         notNull(namedQuery);
 
-        Query query = em.createNamedQuery(namedQuery);
+        TypedQuery<E> query = em.createNamedQuery(namedQuery, entityType);
 
-        Map<Object, Object> parameters = CollectionUtil.createMap(params);
+        Map<String, Object> parameters = CollectionUtil.createMap(params);
 
-        for (Map.Entry<Object, Object> param : parameters.entrySet()) {
-            query.setParameter(String.valueOf(param.getKey()), param.getValue());
-        }
+        parameters.forEach(query::setParameter);
 
         return query;
     }

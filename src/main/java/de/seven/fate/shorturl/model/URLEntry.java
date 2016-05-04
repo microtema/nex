@@ -1,6 +1,8 @@
 package de.seven.fate.shorturl.model;
 
+import de.seven.fate.shorturl.dao.BaseEntity;
 import de.seven.fate.shorturl.dao.IdAble;
+import org.hibernate.validator.constraints.URL;
 
 import javax.annotation.Generated;
 import javax.persistence.*;
@@ -16,41 +18,21 @@ import java.util.Objects;
         @NamedQuery(name = URLEntry.FIND_BY_SHORT_URL, query = "SELECT u FROM URLEntry u WHERE u.shortUrl = :shortUrl")
 })
 @Entity
-public class URLEntry implements IdAble<Long> {
+public class URLEntry extends BaseEntity<Long> {
 
     public static final String FIND_BY_LONG_URL = "URLEntry.findByLongUrl";
     public static final String FIND_BY_SHORT_URL = "URLEntry.findByShortUrl";
 
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
     @NotNull
     @Column(length = 6, unique = true)
     private String shortUrl;
 
+    @URL
     @NotNull
     @Lob
     @Column(unique = true)
     private String longUrl;
-
-    private Date dateCreated;
-    private Date dateUpdated;
-
-    @Version
-    private Long version;
-
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getShortUrl() {
         return shortUrl;
@@ -68,29 +50,6 @@ public class URLEntry implements IdAble<Long> {
         this.longUrl = longUrl;
     }
 
-    public Date getDateCreated() {
-        return dateCreated;
-    }
-
-    public void setDateCreated(Date dateCreated) {
-        this.dateCreated = dateCreated;
-    }
-
-    public Date getDateUpdated() {
-        return dateUpdated;
-    }
-
-    public void setDateUpdated(Date dateUpdated) {
-        this.dateUpdated = dateUpdated;
-    }
-
-    public Long getVersion() {
-        return version;
-    }
-
-    public void setVersion(Long version) {
-        this.version = version;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -98,14 +57,11 @@ public class URLEntry implements IdAble<Long> {
         if (o == null || getClass() != o.getClass()) return false;
         URLEntry urlEntry = (URLEntry) o;
         return Objects.equals(shortUrl, urlEntry.shortUrl) &&
-                Objects.equals(longUrl, urlEntry.longUrl) &&
-                Objects.equals(dateCreated, urlEntry.dateCreated) &&
-                Objects.equals(dateUpdated, urlEntry.dateUpdated) &&
-                Objects.equals(version, urlEntry.version);
+                Objects.equals(longUrl, urlEntry.longUrl);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(shortUrl, longUrl, dateCreated, dateUpdated, version);
+        return Objects.hash(shortUrl, longUrl);
     }
 }

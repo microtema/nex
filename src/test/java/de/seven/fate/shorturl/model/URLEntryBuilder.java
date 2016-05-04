@@ -26,8 +26,8 @@ public class URLEntryBuilder extends AbstractModelBuilder<URLEntry> {
         URLEntry min = super.min();
 
         min.setId(null);
-        min.setDateCreated(null);
-        min.setDateUpdated(null);
+        min.setCreatedDate(null);
+        min.setUpdateDate(null);
         min.setLongUrl(propertyRandomAdapter.randomValue());
         min.setShortUrl(converter.convert(min.getLongUrl()));
 

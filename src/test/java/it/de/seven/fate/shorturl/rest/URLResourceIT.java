@@ -4,6 +4,7 @@ import de.seven.fate.model.adapter.string.UrlPropertyRandomAdapter;
 import de.seven.fate.shorturl.converter.URLShortConverter;
 import de.seven.fate.shorturl.model.URLEntryBuilder;
 import de.seven.fate.shorturl.rest.URLResource;
+import de.seven.fate.shorturl.rest.interceptor.ErrorMessage;
 import it.de.seven.fate.shorturl.util.DeploymentUtil;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
@@ -31,6 +32,9 @@ public class URLResourceIT {
 
     URLResource sut;
 
+    @ArquillianResource
+    URL baseURL;
+
     URLEntryBuilder builder = new URLEntryBuilder(new UrlPropertyRandomAdapter(), new URLShortConverter());
 
     @Deployment
@@ -40,10 +44,32 @@ public class URLResourceIT {
 
     @Test
     @RunAsClient
-    public void getShortUrl(@ArquillianResource URL baseURL) throws Exception {
+    public void shouldNotConvertShortUrl() throws Exception {
 
-        String longUrl = builder.random().getLongUrl();
         //given
+        String longUrl = "";
+
+        ClientRequest request = new ClientRequest(new URL(baseURL, "rest/url").toExternalForm());
+        request.accept(MediaType.APPLICATION_JSON);
+        request.setHttpMethod("POST");
+        request.body(MediaType.APPLICATION_JSON, longUrl);
+        ClientResponse<ErrorMessage> clientResponse = request.post(ErrorMessage.class);
+
+        //then
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), clientResponse.getStatus());
+
+        ErrorMessage errorMessage = clientResponse.getEntity();
+
+        Assert.assertNotNull(errorMessage);
+        Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), errorMessage.getCode());
+    }
+
+    @Test
+    @RunAsClient
+    public void getShortUrl() throws Exception {
+
+        //given
+        String longUrl = builder.random().getLongUrl();
 
         //when
         ClientRequest request = new ClientRequest(new URL(baseURL, "rest/url").toExternalForm());
@@ -63,34 +89,18 @@ public class URLResourceIT {
 
     @Test
     @RunAsClient
-    public void getLongUrl(@ArquillianResource URL baseURL) throws Exception {
+    public void getLongUrl() throws Exception {
 
+        //given
         String longUrl = builder.random().getLongUrl();
+        String shortUrl = convertAndSaveUrl(longUrl);
         //given
 
         //when
-        ClientRequest request = new ClientRequest(new URL(baseURL, "rest/url").toExternalForm());
-        request.accept(MediaType.APPLICATION_JSON);
-        request.setHttpMethod("POST");
-        request.body(MediaType.APPLICATION_JSON, longUrl);
-        ClientResponse<String> clientResponse = request.post(String.class);
-
-        //then
-        assertEquals(Response.Status.OK.getStatusCode(), clientResponse.getStatus());
-
-        String shortUrl = clientResponse.getEntity();
-
-        Assert.assertNotNull(shortUrl);
-        Assert.assertFalse(shortUrl.isEmpty());
-
-
-        //given
-
-        //when
-        request = new ClientRequest(new URL(baseURL, "rest/url/long/" + shortUrl).toExternalForm());
+        ClientRequest request = new ClientRequest(new URL(baseURL, "rest/url/long/" + shortUrl).toExternalForm());
         request.accept(MediaType.APPLICATION_JSON);
         request.setHttpMethod("GET");
-        clientResponse = request.get(String.class);
+        ClientResponse<String> clientResponse = request.get(String.class);
 
         //then
         assertEquals(Response.Status.OK.getStatusCode(), clientResponse.getStatus());
@@ -99,10 +109,24 @@ public class URLResourceIT {
 
     @Test
     @RunAsClient
-    public void redirect(@ArquillianResource URL baseURL) throws Exception {
+    public void redirect() throws Exception {
 
         //given
         String longUrl = builder.random().getLongUrl();
+        String shortUrl = convertAndSaveUrl(longUrl);
+
+        //when
+        ClientRequest request = new ClientRequest(new URL(baseURL, "rest/url/" + shortUrl).toExternalForm());
+        request.accept(MediaType.APPLICATION_JSON);
+        request.setHttpMethod("GET");
+        ClientResponse<String> clientResponse = request.get();
+
+        //then
+        assertEquals(Response.Status.SEE_OTHER.getStatusCode(), clientResponse.getStatus());
+        Assert.assertEquals(longUrl, clientResponse.getLocation().getHref());
+    }
+
+    private String convertAndSaveUrl(String longUrl) throws Exception {
 
         ClientRequest request = new ClientRequest(new URL(baseURL, "rest/url").toExternalForm());
         request.accept(MediaType.APPLICATION_JSON);
@@ -110,22 +134,7 @@ public class URLResourceIT {
         request.body(MediaType.APPLICATION_JSON, longUrl);
         ClientResponse<String> clientResponse = request.post(String.class);
 
-        assertEquals(Response.Status.OK.getStatusCode(), clientResponse.getStatus());
-
-        String shortUrl = clientResponse.getEntity();
-
-        Assert.assertNotNull(shortUrl);
-        Assert.assertFalse(shortUrl.isEmpty());
-
-        //when
-        request = new ClientRequest(new URL(baseURL, "rest/url/" + shortUrl).toExternalForm());
-        request.accept(MediaType.APPLICATION_JSON);
-        request.setHttpMethod("GET");
-        clientResponse = request.get();
-
-        //then
-        assertEquals(Response.Status.SEE_OTHER.getStatusCode(), clientResponse.getStatus());
-        Assert.assertEquals(longUrl, clientResponse.getLocation().getHref());
+        return clientResponse.getEntity();
     }
 
 }
